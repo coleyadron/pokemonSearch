@@ -26,7 +26,7 @@ class PokemonCard extends StatelessWidget {
               imageUrl: pokemon.spriteUrl,
               placeholder: (_, __) => CircularProgressIndicator(),
             ),
-            Text(pokemon.name),
+            Text('${pokemon.name} #${pokemon.id}'),
             IconButton(
               icon: Icon(
                 pokemonProvider.isFavorite(pokemon.id)

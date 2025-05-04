@@ -23,6 +23,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Pokémon App',
+      theme: ThemeData(primaryColor: Colors.red,
+      secondaryHeaderColor: const Color.fromARGB(255, 87, 9, 9),
+      visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
       home: HomeScreen(),
     );
   }

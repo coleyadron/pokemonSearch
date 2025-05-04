@@ -37,7 +37,8 @@ Widget build(BuildContext context){
   final pokemonProvider = Provider.of<PokemonProvider>(context);
   return Scaffold(
     appBar: AppBar(
-      title: Text('Pokédex'),
+      title: Text('Pokédex', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+      backgroundColor: const Color.fromARGB(255, 97, 8, 2)
     ),
     body: pokemonProvider.pokemons.isEmpty && !pokemonProvider.isLoading
         ? Center(child: CircularProgressIndicator())

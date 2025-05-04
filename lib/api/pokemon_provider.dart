@@ -18,7 +18,7 @@ class PokemonProvider with ChangeNotifier{
   Future<void> fetchPokemons() async {
     if (_isLoading || !_hasMore) return;
     _isLoading = true;
-    notifyListeners();
+    //notifyListeners();
     //const String url = 'https://pokeapi.co/api/v2/pokemon?limit=20';
 
     try {

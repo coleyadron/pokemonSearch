@@ -2,7 +2,7 @@ class Pokemon {
   final int id;
   final String name;
   final String spriteUrl;
-  final String? shinySpriteUrl;
+  final String shinySpriteUrl;
   final Map<String, int> stats;
   final List<String> types;
   final List<String> abilities;
