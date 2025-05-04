@@ -2,21 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../api/pokemon_provider.dart';
 import '../screens/pokemon_card.dart';
+import 'favorites_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  HomeScreenState createState() => HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class HomeScreenState extends State<HomeScreen> {
   @override 
   void initState() {
     super.initState();
     Provider.of<PokemonProvider>(context, listen: false).fetchPokemons();
   }
-}
-
-@override
+  @override
 Widget build(BuildContext context){
   final pokemonProvider = Provider.of<PokemonProvider>(context);
   return Scaffold(
@@ -35,12 +34,16 @@ Widget build(BuildContext context){
             ),
         ),
     bottomNavigationBar: BottomNavigationBar(
-      items: [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.favorite),),
-      ],
+      items: const <BottomNavigationBarItem>[
+      BottomNavigationBarItem(
+        icon: Icon(Icons.home),
+        label: 'Home', // Required
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.favorite),
+        label: 'Favorites', // Required
+      ),
+    ],
       currentIndex: 0,
       onTap: (index) {
         if (index == 1) {
@@ -55,3 +58,5 @@ Widget build(BuildContext context){
       )
   );
 }
+}
+

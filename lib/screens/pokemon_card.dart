@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../api/pokemon_provider.dart';
 import '../models/pokemon.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'details_screen.dart';
 
 class PokemonCard extends StatelessWidget {
   final Pokemon pokemon;

@@ -2,7 +2,7 @@ class Pokemon {
   final int id;
   final String name;
   final String spriteUrl;
-  final String shinySpriteUrl;
+  final String? shinySpriteUrl;
   final Map<String, int> stats;
   final List<String> types;
   final List<String> abilities;
@@ -18,14 +18,39 @@ class Pokemon {
   });
 
   factory Pokemon.fromJson(Map<String, dynamic> json) {
+    final stats = <String, int>{};
+    if (json['stats'] != null) {
+      for (final stat in json['stats']) {
+        final statName = stat['stat']['name'] as String;
+        final baseStat = stat['base_stat'] as int;
+        stats[statName] = baseStat;
+      }
+    }
+
+    // Convert types
+    final types = <String>[];
+    if (json['types'] != null) {
+      types.addAll(
+        (json['types'] as List).map((type) => type['type']['name'] as String),
+      );
+    }
+
+    // Convert abilities
+    final abilities = <String>[];
+    if (json['abilities'] != null) {
+      abilities.addAll(
+        (json['abilities'] as List).map((ability) => ability['ability']['name'] as String),
+      );
+    }
+
     return Pokemon(
       id: json['id'],
       name: json['name'],
       spriteUrl: json['sprites']['other']['official-artwork']['front_default'],
       shinySpriteUrl: json['sprites']['other']['official-artwork']['front_shiny'],
-      stats: Map<String, int>.from(json['stats'].map((stat) => MapEntry(stat['stat']['name'], stat['base_stat']))),
-      types: List<String>.from(json['types'].map((type) => type['type']['name'])).toList(),
-      abilities: List<String>.from(json['abilities'].map((ability) => ability['ability']['name'])).toList(),
+      stats: stats,
+      types: types,
+      abilities: abilities,
     );
   }
 }

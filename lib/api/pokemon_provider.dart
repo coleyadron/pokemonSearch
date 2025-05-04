@@ -8,16 +8,21 @@ class PokemonProvider with ChangeNotifier{
   List<int> _favorites = [];
 
   List<Pokemon> get pokemons => _pokemons;
-  List<int> get favourites => _favorites;
+  List<int> get favorites => _favorites;
 
   Future<void> fetchPokemons() async {
     const String url = 'https://pokeapi.co/api/v2/pokemon?limit=20';
     try {
+      _pokemons = [];
+      notifyListeners();
+
       final response = await http.get(Uri.parse(url));
      
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final results = data['results'] as List;
+
+        final List<Pokemon> loadedPokemons = [];
 
         for (var result in results) {
           final pokemonResponse = await http.get(Uri.parse(result['url']));
@@ -25,12 +30,18 @@ class PokemonProvider with ChangeNotifier{
           if (pokemonResponse.statusCode == 200) {
             final pokemonData = json.decode(pokemonResponse.body);
             final pokemon = Pokemon.fromJson(pokemonData);
-            _pokemons.add(pokemon);
+            loadedPokemons.add(pokemon);
           } else {
             throw Exception('Failed to load Pokemon data');
           }
         }
-        notifyListeners();
+
+        if (loadedPokemons.isNotEmpty) {
+          _pokemons = loadedPokemons;
+          notifyListeners();
+        } else {
+          throw Exception('No Pokemons found');
+        }
       } else {
         throw Exception('Failed to load Pokemon list');
       }
@@ -50,6 +61,21 @@ class PokemonProvider with ChangeNotifier{
 
   bool isFavorite(int id) {
     return _favorites.contains(id);
+  }
+
+  set favorites(List<int> favorites) {
+    _favorites = favorites;
+    notifyListeners();
+  }
+
+  Future<Pokemon> getPokemonById(int id) async {
+    final response = await http.get(Uri.parse('https://pokeapi.co/api/v2/pokemon/$id'));
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return Pokemon.fromJson(data);
+    } else {
+      throw Exception('Failed to load Pokemon');
+    }
   }
 
 
