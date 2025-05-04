@@ -6,21 +6,39 @@ import 'dart:convert';
 class PokemonProvider with ChangeNotifier{
   List<Pokemon> _pokemons = [];
   List<int> _favorites = [];
+  int _currentPage = 0;
+  bool _isLoading = false;
+  bool _hasMore = true;
 
+  bool get isLoading => _isLoading;
+  bool get hasMore => _hasMore;
   List<Pokemon> get pokemons => _pokemons;
   List<int> get favorites => _favorites;
 
   Future<void> fetchPokemons() async {
-    const String url = 'https://pokeapi.co/api/v2/pokemon?limit=20';
-    try {
-      _pokemons = [];
-      notifyListeners();
+    if (_isLoading || !_hasMore) return;
+    _isLoading = true;
+    notifyListeners();
+    //const String url = 'https://pokeapi.co/api/v2/pokemon?limit=20';
 
+    try {
+      _currentPage++;
+      final limit = 20;
+      final offset = (_currentPage - 1) * limit;
+      final url = 'https://pokeapi.co/api/v2/pokemon?limit=$limit&offset=$offset';
+  
       final response = await http.get(Uri.parse(url));
      
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final results = data['results'] as List;
+
+        if (results.isEmpty) {
+          _hasMore = false;
+          _isLoading = false;
+          notifyListeners();
+          return;
+        }
 
         final List<Pokemon> loadedPokemons = [];
 
@@ -35,13 +53,9 @@ class PokemonProvider with ChangeNotifier{
             throw Exception('Failed to load Pokemon data');
           }
         }
-
-        if (loadedPokemons.isNotEmpty) {
-          _pokemons = loadedPokemons;
-          notifyListeners();
-        } else {
-          throw Exception('No Pokemons found');
-        }
+        _pokemons.addAll(loadedPokemons);
+        _isLoading = false;
+        notifyListeners();
       } else {
         throw Exception('Failed to load Pokemon list');
       }
