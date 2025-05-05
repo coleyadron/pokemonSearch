@@ -15,30 +15,68 @@ class PokemonCard extends StatelessWidget {
     final pokemonProvider = Provider.of<PokemonProvider>(context);
 
     return Card(
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: InkWell(
         onTap: () {
           Navigator.push(context, MaterialPageRoute(
             builder: (_) => DetailScreen(pokemon: pokemon)));
         },
-        child: Column(
-          children: [
-            CachedNetworkImage(
-              imageUrl: pokemon.spriteUrl,
-              placeholder: (_, __) => CircularProgressIndicator(),
+        child: Padding(
+          padding: EdgeInsets.all(8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Expanded(
+                flex: 3,
+                child: SizedBox(
+                  height: 150, // Adjust height as needed
+                  child: CachedNetworkImage(
+                    imageUrl: pokemon.spriteUrl,
+                    fit: BoxFit.contain,
+                    placeholder: (_, __) => CircularProgressIndicator(),
+                  ),
+                ),
             ),
-            Text('${pokemon.name} #${pokemon.id}'),
-            IconButton(
-              icon: Icon(
-                pokemonProvider.isFavorite(pokemon.id)
-                    ? Icons.favorite
-                    : Icons.favorite_border,
-              ),
-              onPressed: () {
-                pokemonProvider.toggleFavorite(pokemon.id);
-              },
+            Expanded(
+              flex: 1,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      '${pokemon.name} #${pokemon.id}',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      return IconButton(
+                        iconSize: constraints.maxWidth * 0.10,
+                        icon: Icon(
+                          pokemonProvider.isFavorite(pokemon.id)
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                          color: Colors.red[400],
+                        ),
+                        onPressed: () {
+                          pokemonProvider.toggleFavorite(pokemon.id);
+                        },
+                      );
+                    },
+                  ),
+                ],
+              )
             ),
           ],
         ),
+        ), 
       ),
     );
   }

@@ -48,6 +48,9 @@ Widget build(BuildContext context){
             controller: _scrollController,
             gridDelegate : SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
+              childAspectRatio: 0.75,
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
             ),
             itemCount: pokemonProvider.pokemons.length + (pokemonProvider.hasMore ? 1 : 0),
             itemBuilder: (ctx, i) {
