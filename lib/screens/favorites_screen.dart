@@ -3,17 +3,27 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../api/pokemon_provider.dart';
 import 'details_screen.dart';
+import 'home_screen.dart';
+import 'search_screen.dart';
 
-class FavoritesScreen extends StatelessWidget {
+class FavoritesScreen extends StatefulWidget {
+  @override
+  _FavoritesScreenState createState() => _FavoritesScreenState();
+}
+
+class _FavoritesScreenState extends State<FavoritesScreen> {
+  int _currentIndex = 1;
+
   @override
   Widget build(BuildContext context) {
     final pokemonProvider = Provider.of<PokemonProvider>(context);
     final favoritePokemons = pokemonProvider.pokemons
         .where((pokemon) => pokemonProvider.favorites.contains(pokemon.id))
         .toList();
-
     return Scaffold(
-      appBar: AppBar(title: Text('Favorites')),
+      appBar: AppBar(title: Text('Favorites', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        backgroundColor: const Color.fromARGB(255, 97, 8, 2),
+      ),
       body: favoritePokemons.isEmpty
           ? Center(child: Text('No favorites yet!'))
           : ListView.builder(
@@ -34,17 +44,36 @@ class FavoritesScreen extends StatelessWidget {
               ),
             ),
       bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home)),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite)),
-        ],
-        currentIndex: 1,
-        onTap: (index) {
-          if (index == 0) {
-            Navigator.pop(context);
-          }
-        },
-      ),
+      currentIndex: _currentIndex,
+      onTap: (index) {
+        setState(() => _currentIndex = index);
+        if (index == 0) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen()),
+          );
+        } else if (index == 2) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => SearchScreen()),
+          );
+        }
+      },
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.favorite),
+          label: 'Favorites',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.search),
+          label: 'Search',
+        ),
+      ],
+    ),
     );
   }
 }

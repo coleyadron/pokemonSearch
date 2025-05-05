@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../api/pokemon_provider.dart';
 import '../screens/pokemon_card.dart';
 import 'favorites_screen.dart';
+import 'search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -35,6 +36,7 @@ class HomeScreenState extends State<HomeScreen> {
 @override
 Widget build(BuildContext context){
   final pokemonProvider = Provider.of<PokemonProvider>(context);
+  int _currentIndex = 0;
   return Scaffold(
     appBar: AppBar(
       title: Text('Pokédex', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
@@ -64,30 +66,38 @@ Widget build(BuildContext context){
             )
             ),
           ]
-        ),       
+        ),      
     bottomNavigationBar: BottomNavigationBar(
-      items: const <BottomNavigationBarItem>[
-      BottomNavigationBarItem(
-        icon: Icon(Icons.home),
-        label: 'Home', // Required
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.favorite),
-        label: 'Favorites', // Required
-      ),
-    ],
-      currentIndex: 0,
+      currentIndex: _currentIndex,
       onTap: (index) {
+        setState(() => _currentIndex = index);
         if (index == 1) {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => FavoritesScreen(),
-            ),
+            MaterialPageRoute(builder: (context) => FavoritesScreen()),
+          );
+        } else if (index == 2) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => SearchScreen()),
           );
         }
       },
-      )
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.favorite),
+          label: 'Favorites',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.search),
+          label: 'Search',
+        ),
+      ],
+    ),
   );
 }
 }

@@ -92,5 +92,49 @@ class PokemonProvider with ChangeNotifier{
     }
   }
 
+  Future<List<Pokemon>> searchPokemon(String query) async {
+    if (query.isEmpty) {
+      return [];
+    }
+
+    try {
+      final localResults = _pokemons.where((pokemon) {
+        return pokemon.name.toLowerCase().contains(query.toLowerCase()) ||
+               pokemon.id.toString().contains(query);
+      }).toList();
+      if (localResults.isNotEmpty) {
+        return localResults;
+      }
+
+      final response = await http.get(Uri.parse('https://pokeapi.co/api/v2/pokemon?limit=1000'));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final results = data['results'] as List;
+
+        final List<Pokemon> searchResults = [];
+
+        for (var result in results) {
+          final pokemonResponse = await http.get(Uri.parse(result['url']));
+          
+          if (pokemonResponse.statusCode == 200) {
+            final pokemonData = json.decode(pokemonResponse.body);
+            final pokemon = Pokemon.fromJson(pokemonData);
+            if (pokemon.name.toLowerCase().contains(query.toLowerCase()) ||
+                pokemon.id.toString().contains(query)) {
+              searchResults.add(pokemon);
+            }
+          }
+        }
+        return searchResults;
+      } else {
+        throw Exception('Failed to load Pokemon list');
+      }
+    }
+    catch (e) {
+      debugPrint('Error searching Pokemons: $e');
+      return [];
+    }
+  }
+
 
 }
