@@ -25,7 +25,7 @@ class PokemonCard extends StatelessWidget {
             builder: (_) => DetailScreen(pokemon: pokemon)));
         },
         child: Padding(
-          padding: EdgeInsets.all(8),
+          padding: EdgeInsets.all(4),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -50,7 +50,7 @@ class PokemonCard extends StatelessWidget {
                     child: Text(
                       '${pokemon.name} #${pokemon.id}',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -58,12 +58,13 @@ class PokemonCard extends StatelessWidget {
                   LayoutBuilder(
                     builder: (context, constraints) {
                       return IconButton(
-                        iconSize: constraints.maxWidth * 0.10,
+                        padding: EdgeInsets.zero, 
+                        iconSize: constraints.maxWidth * 0.15,
                         icon: Icon(
                           pokemonProvider.isFavorite(pokemon.id)
                               ? Icons.favorite
                               : Icons.favorite_border,
-                          color: Colors.red[400],
+                              color: Colors.red[400],
                         ),
                         onPressed: () {
                           pokemonProvider.toggleFavorite(pokemon.id);

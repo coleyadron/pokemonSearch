@@ -50,7 +50,7 @@ Widget build(BuildContext context){
             controller: _scrollController,
             gridDelegate : SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              childAspectRatio: 0.75,
+              childAspectRatio: 0.70,
               mainAxisSpacing: 8,
               crossAxisSpacing: 8,
             ),

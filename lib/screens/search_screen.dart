@@ -84,7 +84,7 @@ class _SearchScreenState extends State<SearchScreen> {
               child: GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  childAspectRatio: 0.8,
+                  childAspectRatio: 0.71,
                 ),
                 itemCount: _searchResults.length,
                 itemBuilder: (ctx, i) => PokemonCard(
