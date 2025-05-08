@@ -2,10 +2,12 @@ import 'package:flutter/foundation.dart';
 import '../models/pokemon.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PokemonProvider with ChangeNotifier{
   List<Pokemon> _pokemons = [];
   List<int> _favorites = [];
+  static const String _favoritesKey = 'favorites';
   int _currentPage = 0;
   bool _isLoading = false;
   bool _hasMore = true;
@@ -64,12 +66,30 @@ class PokemonProvider with ChangeNotifier{
     }
   }
 
+  PokemonProvider() {
+    _loadFavorites();
+  }
+
+  Future<void> _loadFavorites() async {
+    final prefs = await SharedPreferences.getInstance();
+    final favoriteIds = prefs.getStringList(_favoritesKey) ?? [];
+    _favorites = favoriteIds.map(int.parse).toList();
+    notifyListeners();
+  }
+
   Future<void> toggleFavorite(int id) async {
+    final prefs = await SharedPreferences.getInstance();
     if (_favorites.contains(id)) {
       _favorites.remove(id);
     } else {
       _favorites.add(id);
     }
+
+    await prefs.setStringList(
+      _favoritesKey,
+      _favorites.map((id) => id.toString()).toList(),
+    );
+
     notifyListeners();
   }
 
@@ -135,6 +155,4 @@ class PokemonProvider with ChangeNotifier{
       return [];
     }
   }
-
-
 }
