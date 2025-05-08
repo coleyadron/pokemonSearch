@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MockPokemonProvider extends Mock implements PokemonProvider {}
 
@@ -28,6 +29,10 @@ void main() {
     abilities: ['overgrow']
   );
 
+  setUp(() {
+    SharedPreferences.setMockInitialValues({});
+  });
+
   testWidgets('Toggles favorite status on icon tap', (tester) async {
     final provider = PokemonProvider();
     
@@ -40,14 +45,23 @@ void main() {
       )
     );
 
+    // Initial state should be not favorite
     expect(provider.isFavorite(1), isFalse);
-    await tester.tap(find.byType(IconButton));
-    await tester.pump();
-    expect(provider.isFavorite(1), isTrue);
-  });
-  testWidgets('Displays favorite icon correctly', (tester) async {
-    final provider = PokemonProvider()..toggleFavorite(1);
+    expect(find.byIcon(Icons.favorite_border), findsOneWidget);
     
+    // Tap the favorite button
+    await tester.tap(find.byType(IconButton));
+    await tester.pump(); // Single pump is enough for state change
+    
+    // State should now be favorite
+    expect(provider.isFavorite(1), isTrue);
+    expect(find.byIcon(Icons.favorite), findsOneWidget);
+  });
+
+  testWidgets('Displays favorite icon correctly', (tester) async {
+    final provider = PokemonProvider();
+
+    await provider.toggleFavorite(1);
     await tester.pumpWidget(
       MaterialApp(
         home: ChangeNotifierProvider.value(
@@ -56,8 +70,10 @@ void main() {
         ),
       )
     );
-
+    
+    // Should show the filled favorite icon
     expect(find.byIcon(Icons.favorite), findsOneWidget);
+    expect(find.byIcon(Icons.favorite_border), findsNothing);
   });
 
   testWidgets('Test the details screen navigation', (tester) async {
